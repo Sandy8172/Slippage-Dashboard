@@ -12,6 +12,9 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import dayjs from "dayjs";
+import { useSelector, useDispatch } from "react-redux";
+import { dataSliceActions } from "../../store/dataSlice";
+import axios from "axios";
 
 const Filters = () => {
   const [selectedDateRange, setSelectedDateRange] = useState([null, null]);
@@ -22,7 +25,11 @@ const Filters = () => {
   const [region, setRegion] = useState("");
   const [cluster, setCluster] = useState("");
   const [selectedName, setSelectedName] = useState(null);
+  const [vixFrom, setVixFrom] = useState("");
+  const [vixTo, setVixTo] = useState("");
 
+  const dispatch = useDispatch();
+  const names = useSelector((state) => state.names);
 
   const handleDateChange = (newDateRange) => {
     setSelectedDateRange(newDateRange);
@@ -39,65 +46,64 @@ const Filters = () => {
     ? formatSelectedDate(selectedDateRange[1])
     : "";
 
-    
-    const handleDaysChange = (event) => {
-      setDays(event.target.value);
+  const handleDaysChange = (event) => {
+    setDays(event.target.value);
   };
-  
+
   const handleVariantChange = (event) => {
     setVariant(event.target.value);
   };
-  
+
   const handleTypeChange = (event) => {
     setType(event.target.value);
   };
-  
+
   const handleInstrumentChange = (event) => {
     setInstrument(event.target.value);
   };
   const handleRegionChange = (event) => {
     setRegion(event.target.value);
   };
-  
+
   const handleClusterChange = (event) => {
     setCluster(event.target.value);
   };
-  
+
   const handleNameChange = (event, value) => {
     setSelectedName(value);
   };
-  
+  // Handlers for VIX input fields
+  const handleVixFromChange = (event) => {
+    setVixFrom(event.target.value);
+  };
 
+  const handleVixToChange = (event) => {
+    setVixTo(event.target.value);
+  };
 
-  console.log("from", startingDate, "to", lastDate);
-  console.log("selectedName--", selectedName?.label);
-  console.log("instrumen--", instrument);
-  console.log("region--", region);
-  console.log("cluster--", cluster);
-  console.log("type--", type);
-  console.log("days--", days);
+  const fetchDataHandler = () => {
+    dispatch(dataSliceActions.toggleLoading());
+    const filters = {};
+    axios
+      .post("abc", filters)
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+      dispatch(dataSliceActions.toggleTable());
+  };
 
-  const names = [
-    { label: "Tarun" },
-    { label: "Manni" },
-    { label: "Tanmay" },
-    { label: "Piyush" },
-    { label: "Aman" },
-    { label: "Hansraj" },
-    { label: "Pushpendr" },
-    { label: "Ravleen" },
-    { label: "Keerti" },
-    { label: "Himanshu" },
-    { label: "Yashveer" },
-    { label: "Shivam" },
-    { label: "Nishant" },
-    { label: "Umesh" },
-    { label: "Puneet" },
-    { label: "Mudit" },
-    { label: "Sumit" },
-    { label: "Hasan" },
-    { label: "Dinesh" },
-  ];
+  // console.log("from", startingDate, "to", lastDate);
+  // console.log("selectedName--", selectedName?.label);
+  // console.log("instrumen--", instrument);
+  // console.log("region--", region);
+  // console.log("cluster--", cluster);
+  // console.log("type--", type);
+  // console.log("days--", days);
+  // console.log("VIX From:", vixFrom);
+  // console.log("VIX To:", vixTo);
 
   return (
     <>
@@ -107,19 +113,21 @@ const Filters = () => {
           alignItems: "center",
           justifyContent: "space-around",
           boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.2)",
-          width:"90%",
-          borderRadius:"0.5rem",
-          margin:"1rem auto",
+          width: "90%",
+          borderRadius: "0.5rem",
+          margin: "1rem auto",
         }}
       >
         <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DemoContainer sx={{ width: "16%",mb:1 }} components={["DateRangePicker"]}>
+          <DemoContainer
+            sx={{ width: "16%", mb: 1 }}
+            components={["DateRangePicker"]}
+          >
             <DateRangePicker
               calendars={1}
               localeText={{ start: "From", end: "To" }}
               value={selectedDateRange}
               onChange={handleDateChange}
-              
             />
           </DemoContainer>
         </LocalizationProvider>
@@ -246,7 +254,27 @@ const Filters = () => {
             <MenuItem value="Cluster3">Cluster3</MenuItem>
           </Select>
         </FormControl>
-        <Button variant="contained">View</Button>
+        {/* VIX From */}
+        <TextField
+          sx={{ width: 110 }}
+          type="number"
+          size="small"
+          label="VIX From"
+          value={vixFrom}
+          onChange={handleVixFromChange}
+        />
+        {/* VIX To */}
+        <TextField
+          sx={{ width: 110 }}
+          type="number"
+          size="small"
+          label="VIX To"
+          value={vixTo}
+          onChange={handleVixToChange}
+        />
+        <Button onClick={fetchDataHandler} variant="contained">
+          View
+        </Button>
       </div>
     </>
   );

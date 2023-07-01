@@ -3,6 +3,9 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { styled } from "@mui/material/styles";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
+import { useSelector } from "react-redux";
+
+
 const TableHeader = () => {
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -17,24 +20,14 @@ const TableHeader = () => {
         width: '5%', // Adjust the width as needed
       },
   }));
-  const headerData = [
-    "Date",
-    "Days",
-    "Name",
-    "Variant",
-    "Type",
-    "Instrument",
-    "Quantity",
-    "Margin",
-    "Slippage",
-    "ROI",
-    "PNL",
-  ];
+
+const headers = useSelector(state=>state.headerData)
+
   return (
     <TableHead sx={{position: "sticky"}}>
       <TableRow>
         <StyledTableCell align="center">Sr.</StyledTableCell>
-        {headerData.map((item,index) => (
+        {headers.map((item,index) => (
           <StyledTableCell key={index} align="center">{item}</StyledTableCell>
         ))}
       </TableRow>

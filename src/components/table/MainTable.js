@@ -5,6 +5,8 @@ import Paper from "@mui/material/Paper";
 import { styled } from "@mui/material/styles";
 import TableHeader from "./TableHeader";
 import TableBody from "./TableData";
+import { useSelector } from "react-redux";
+import Spinner from "../spinner/Spinner";
 
 const StyledTableContainer = styled(TableContainer)`
   box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
@@ -22,16 +24,35 @@ const StyledTableContainer = styled(TableContainer)`
   }
 `;
 const MainTable = () => {
+  const { showTable, isLoading } = useSelector((state) => ({
+    showTable: state.showTable,
+    isLoading: state.isLoading,
+  }));
+
   return (
-    <StyledTableContainer
-      component={Paper}
-      sx={{ width: "90%", margin: "2rem auto", maxHeight: "81vh" }}
-    >
-      <Table sx={{ width: "100%" }} aria-label="customized table" size="small">
-        <TableHeader />
-        <TableBody />
-      </Table>
-    </StyledTableContainer>
+    <>
+      {showTable ? (
+        <StyledTableContainer
+          component={Paper}
+          sx={{ width: "90%", margin: "2rem auto", maxHeight: "81vh" }}
+        >
+          <Table
+            sx={{ width: "100%" }}
+            aria-label="customized table"
+            size="small"
+          >
+            <TableHeader />
+            <TableBody />
+          </Table>
+        </StyledTableContainer>
+      ) : isLoading ? (
+        <Spinner />
+      ) : (
+        <h2 style={{ textAlign: "center", marginTop: "25vh", color: "red" }}>
+          Apply some filters or click on View to See the Table
+        </h2>
+      )}
+    </>
   );
 };
 
